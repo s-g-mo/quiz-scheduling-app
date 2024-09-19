@@ -12,9 +12,7 @@ def find_matchup_solutions(
     matchups: List[Tuple[int, int, int]],
     max_solutions: int = 10,
 ) -> List[np.ndarray]:
-
     if n_matches_per_team % 3 == 0:
-
         error_msg_1 = (
             f"It is impossible to generate valid matchups if n_matches_per_team "
             f"is a multiple of 3 and n_teams <= 2 * n_matches_per_team. "
@@ -68,7 +66,6 @@ def find_matchup_solutions(
     )
 
     while len(solutions) < max_solutions:
-
         prob.solve()
 
         if pulp.LpStatus[prob.status] == "Optimal":
@@ -84,12 +81,10 @@ def find_matchup_solutions(
 
 
 def check_matchups(solution: np.array, n_teams: int, n_matches_per_team: int) -> bool:
-
     print(solution)
     is_solution = True
 
     for team in range(1, n_teams + 1):
-
         team_filter = solution == team
 
         # Check to ensure each team has exactly n_matches_per_team
@@ -105,7 +100,8 @@ def check_matchups(solution: np.array, n_teams: int, n_matches_per_team: int) ->
         # Ensure each team visits each bench position at least base_visits times
         if (bench_counts < base_visits).any():
             print(
-                f"Team {team} does not visit each bench position at least", f"{base_visits} times."
+                f"Team {team} does not visit each bench position at least",
+                f"{base_visits} times.",
             )
             is_solution = False
 
@@ -134,7 +130,6 @@ def check_matchups(solution: np.array, n_teams: int, n_matches_per_team: int) ->
 def check_schedule(
     df_schedule: pd.DataFrame, n_teams: int, n_rooms: int, n_time_slots: int
 ) -> bool:
-
     print(df_schedule)
     is_solution = True
 
@@ -143,7 +138,6 @@ def check_schedule(
     team_time_slots = {team: [] for team in range(1, n_teams + 1)}
 
     for index, row in df_schedule.iterrows():
-
         room = row["Room"]
         matchup = row["Matchup"]
         time_slot = row["TimeSlot"]
@@ -154,7 +148,6 @@ def check_schedule(
 
     # Check to make sure no team has been scheduled more than once at a time
     for time_slot in range(1, n_time_slots + 1):
-
         df_time_slot = df_schedule[df_schedule.TimeSlot == time_slot]
 
         teams_competing_in_current_time_slot = np.array(df_time_slot.Matchup.to_list())
@@ -209,7 +202,6 @@ def enforce_each_team_in_exactly_n_matches_per_team(
     n_teams: int,
     n_matches_per_team: int,
 ) -> pulp.LpProblem:
-
     for team in range(1, n_teams + 1):
         problem += (
             pulp.lpSum(variables[i] for i, M in enumerate(matchups) if team in M)
@@ -226,10 +218,8 @@ def enforce_bench_constraints(
     n_teams: int,
     n_matches_per_team: int,
 ) -> pulp.LpProblem:
-
     for team in range(1, n_teams + 1):
         for position in range(3):
-
             if n_matches_per_team < 3:
                 # No bench repeats
                 problem += (
@@ -321,10 +311,8 @@ def limit_consecutive_matchups(
 ) -> pulp.LpProblem:
     # No team can have matches in 3 consecutive time slots
     for team in range(1, n_teams + 1):
-
         # Avoid the last two time slots since we're checking triplets
         for k in range(1, n_time_slots - 1):
-
             # For every triplet of time slots (k, k+1, k+2), team cannot be scheduled in all three
             problem += (
                 pulp.lpSum(
@@ -347,7 +335,6 @@ def enforce_room_diversity_for_each_teams_matchups(
     n_time_slots: int,
     n_matches_per_team: int,
 ) -> pulp.LpProblem:
-
     # Each team must visit different rooms across all time slots
     for team in range(1, n_teams + 1):
         problem += (
@@ -383,7 +370,6 @@ def enforce_no_simultaneous_scheduling_for_each_team(
     n_rooms: int,
     n_time_slots: int,
 ) -> pulp.LpProblem:
-
     for k in range(1, n_time_slots + 1):
         for team in range(1, n_teams + 1):
             problem += (
@@ -406,7 +392,6 @@ def attempt_schedule(
     n_time_slots: int,
     relax_constraints: list = [],
 ) -> Union[pd.DataFrame, None]:
-
     prob = pulp.LpProblem("Quiz_Scheduling_With_Rooms", pulp.LpMaximize)
 
     # Define binary variables for matchups in room j at time k
@@ -418,10 +403,18 @@ def attempt_schedule(
 
     # Constraints
     prob = enforce_each_matchup_must_occur_once(
-        problem=prob, variables=x, matchups=matchups, n_rooms=n_rooms, n_time_slots=n_time_slots
+        problem=prob,
+        variables=x,
+        matchups=matchups,
+        n_rooms=n_rooms,
+        n_time_slots=n_time_slots,
     )
     prob = enforce_each_room_to_host_single_matchup_per_time_slot(
-        problem=prob, variables=x, matchups=matchups, n_rooms=n_rooms, n_time_slots=n_time_slots
+        problem=prob,
+        variables=x,
+        matchups=matchups,
+        n_rooms=n_rooms,
+        n_time_slots=n_time_slots,
     )
     prob = enforce_no_simultaneous_scheduling_for_each_team(
         problem=prob,
@@ -456,7 +449,11 @@ def attempt_schedule(
 
 
 def schedule_matches(
-    matchups: list, n_teams: int, n_matches_per_team: int, n_rooms: int, n_time_slots: int
+    matchups: list,
+    n_teams: int,
+    n_matches_per_team: int,
+    n_rooms: int,
+    n_time_slots: int,
 ) -> Union[pd.DataFrame, List[str]]:
     """
     Schedule matches into n_rooms and n_time_slots, ensuring constraints are met.
@@ -506,7 +503,10 @@ def schedule_matches(
 
     solution_variables = {v.name: v.varValue for v in prob.variables() if v.varValue == 1}
     formatted_solution = format_schedule_output(
-        solution=solution_variables, matchups=matchups, n_rooms=n_rooms, n_time_slots=n_time_slots
+        solution=solution_variables,
+        matchups=matchups,
+        n_rooms=n_rooms,
+        n_time_slots=n_time_slots,
     )
 
     return formatted_solution, constraints_relaxed
@@ -569,9 +569,10 @@ matchup_solutions = find_matchup_solutions(
     max_solutions=1,
 )
 for i, proposed_matchups in enumerate(matchup_solutions):
-
     valid_matchups = check_matchups(
-        solution=proposed_matchups, n_teams=n_teams, n_matches_per_team=n_matches_per_team
+        solution=proposed_matchups,
+        n_teams=n_teams,
+        n_matches_per_team=n_matches_per_team,
     )
     if valid_matchups:
         try:

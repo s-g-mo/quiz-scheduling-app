@@ -59,7 +59,6 @@ class MatchupSolver:
         is_solution = True
 
         for team in range(1, self.n_teams + 1):
-
             team_filter = solution == team
 
             # Check to ensure each team has exactly n_matches_per_team

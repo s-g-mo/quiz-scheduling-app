@@ -15,15 +15,15 @@ class ScheduleSolver:
 
     def schedule_matches(self, matchups: List[Matchup]) -> Union[pd.DataFrame, List[str]]:
         constraints_relaxed = []
-        problem = self.attempt_schedule(matchups)
+        problem = self.attempt_schedule(matchups=matchups)
 
-        if pulp.LpStatus[problem.status] == "Optimal":
+        if problem and pulp.LpStatus[problem.status] == "Optimal":
             print("Solution found!")
         else:
             for constraint in ["room_diversity", "consecutive_matches"]:
                 constraints_relaxed.append(constraint)
                 problem = self.attempt_schedule(matchups, relax_constraints=constraints_relaxed)
-                if pulp.LpStatus[problem.status] == "Optimal":
+                if problem and pulp.LpStatus[problem.status] == "Optimal":
                     break
             else:
                 print("No feasible solution found even after relaxing constraints.")
@@ -39,19 +39,23 @@ class ScheduleSolver:
         problem = pulp.LpProblem("Quiz_Scheduling_With_Rooms", pulp.LpMaximize)
         variables = pulp.LpVariable.dicts(
             "MatchupRoomTime",
-            (range(len(matchups)), range(1, self.n_rooms + 1), range(1, self.n_time_slots + 1)),
+            (
+                range(len(matchups)),
+                range(1, self.n_rooms + 1),
+                range(1, self.n_time_slots + 1),
+            ),
             cat=pulp.LpBinary,
         )
         self.enforce_constraints(problem, variables, matchups, relax_constraints)
 
         problem.solve()
-        return problem
+        return problem, None
 
     def check_schedule(self, df_schedule: pd.DataFrame) -> bool:
         print(df_schedule)
         is_solution = True
-        team_rooms = {team: [] for team in range(1, self.n_teams + 1)}
-        team_time_slots = {team: [] for team in range(1, self.n_teams + 1)}
+        team_rooms: Dict[int, List[int]] = {team: [] for team in range(1, self.n_teams + 1)}
+        team_time_slots: Dict[int, List[int]] = {team: [] for team in range(1, self.n_teams + 1)}
 
         for _, row in df_schedule.iterrows():
             room = row["Room"]
@@ -73,7 +77,7 @@ class ScheduleSolver:
         self,
         problem: pulp.LpProblem,
         variables: pulp.LpVariable,
-        matchups: List[Tuple[int, int, int]],
+        matchups: List[Matchup],
         relax_constraints: List[str],
     ):
         problem = self._enforce_each_matchup_occurrence(problem, variables, matchups)
@@ -89,7 +93,10 @@ class ScheduleSolver:
             problem = self._enforce_room_diversity(problem, variables, matchups)
 
     def _enforce_each_matchup_occurrence(
-        self, problem: pulp.LpProblem, variables: pulp.LpVariable, matchups: List[Matchup]
+        self,
+        problem: pulp.LpProblem,
+        variables: pulp.LpVariable,
+        matchups: List[Matchup],
     ):
         for i in range(len(matchups)):
             problem += (
@@ -103,7 +110,10 @@ class ScheduleSolver:
         return problem
 
     def _enforce_each_room_to_host_single_matchup_per_time_slot(
-        self, problem: pulp.LpProblem, variables: pulp.LpVariable, matchups: List[Matchup]
+        self,
+        problem: pulp.LpProblem,
+        variables: pulp.LpVariable,
+        matchups: List[Matchup],
     ):
         for j in range(1, self.n_rooms + 1):
             for k in range(1, self.n_time_slots + 1):
@@ -111,7 +121,10 @@ class ScheduleSolver:
         return problem
 
     def _enforce_no_simultaneous_scheduling_for_each_team(
-        self, problem: pulp.LpProblem, variables: pulp.LpVariable, matchups: List[Matchup]
+        self,
+        problem: pulp.LpProblem,
+        variables: pulp.LpVariable,
+        matchups: List[Matchup],
     ):
         for k in range(1, self.n_time_slots + 1):
             for team in range(1, self.n_teams + 1):
@@ -127,7 +140,10 @@ class ScheduleSolver:
         return problem
 
     def _limit_consecutive_matchups(
-        self, problem: pulp.LpProblem, variables: pulp.LpVariable, matchups: List[Matchup]
+        self,
+        problem: pulp.LpProblem,
+        variables: pulp.LpVariable,
+        matchups: List[Matchup],
     ):
         for team in range(1, self.n_teams + 1):
             for k in range(1, self.n_time_slots - 1):
@@ -143,7 +159,10 @@ class ScheduleSolver:
         return problem
 
     def _enforce_room_diversity(
-        self, problem: pulp.LpProblem, variables: pulp.LpVariable, matchups: List[Matchup]
+        self,
+        problem: pulp.LpProblem,
+        variables: pulp.LpVariable,
+        matchups: List[Matchup],
     ):
         for team in range(1, self.n_teams + 1):
             problem += (

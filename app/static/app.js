@@ -68,18 +68,18 @@ function displayError(message) {
 function displaySchedule(schedule, constraints_relaxed) {
     console.log("Displaying schedule...");
     const resultTable = document.getElementById('resultTable').querySelector('tbody');
-    
+
     // Clear the existing table rows
     resultTable.innerHTML = '';
 
     schedule.forEach(row => {
         const tr = document.createElement('tr');
-        
+
         // TimeSlot
         const timeSlotTd = document.createElement('td');
         timeSlotTd.textContent = row.TimeSlot;
         tr.appendChild(timeSlotTd);
-        
+
         // Room
         const roomTd = document.createElement('td');
         roomTd.textContent = row.Room;
@@ -94,7 +94,7 @@ function displaySchedule(schedule, constraints_relaxed) {
             matchupTd.textContent = "N/A";
         }
         tr.appendChild(matchupTd);
-        
+
         resultTable.appendChild(tr);
     });
 
@@ -107,4 +107,3 @@ function displaySchedule(schedule, constraints_relaxed) {
         document.getElementById('error-message').style.display = 'none';
     }
 }
-
