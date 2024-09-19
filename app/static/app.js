@@ -2,10 +2,10 @@ document.getElementById('scheduleForm').addEventListener('submit', submitForm);
 
 async function submitForm(event) {
     event.preventDefault();
-    const N_teams = document.getElementById('N_teams').value;
-    const N_matches_per_team = document.getElementById('N_matches_per_team').value;
-    const N_rooms = document.getElementById('N_rooms').value;
-    const N_time_slots = document.getElementById('N_time_slots').value;
+    const n_teams = document.getElementById('n_teams').value;
+    const n_matches_per_team = document.getElementById('n_matches_per_team').value;
+    const n_rooms = document.getElementById('n_rooms').value;
+    const n_time_slots = document.getElementById('n_time_slots').value;
 
     // Show the loading spinner
     document.getElementById('spinner').style.display = 'block';
@@ -19,10 +19,10 @@ async function submitForm(event) {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                N_teams: parseInt(N_teams),
-                N_matches_per_team: parseInt(N_matches_per_team),
-                N_rooms: parseInt(N_rooms),
-                N_time_slots: parseInt(N_time_slots)
+                n_teams: parseInt(n_teams),
+                n_matches_per_team: parseInt(n_matches_per_team),
+                n_rooms: parseInt(n_rooms),
+                n_time_slots: parseInt(n_time_slots)
             })
         });
 
