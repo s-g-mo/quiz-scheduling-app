@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Schedule Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <h1>Quiz Schedule Generator</h1>
+
+    <!-- Error message div for showing errors -->
+    <div id="error-message" style="color: red;"></div> <!-- Styled for visibility -->
+
+    <!-- Form container -->
+    <div id="formContainer">
+        <form id="scheduleForm">
+            <label for="N_teams">Number of Teams:</label>
+            <input type="number" id="N_teams" name="N_teams"><br><br>
+            <label for="N_matches_per_team">Matches per Team:</label>
+            <input type="number" id="N_matches_per_team" name="N_matches_per_team"><br><br>
+            <label for="N_rooms">Number of Rooms:</label>
+            <input type="number" id="N_rooms" name="N_rooms"><br><br>
+            <label for="N_time_slots">Number of Time Slots:</label>
+            <input type="number" id="N_time_slots" name="N_time_slots"><br><br>
+            <input type="submit" value="Generate Schedule">
+        </form>
+    </div>
+
+    <!-- Spinner to indicate the loading process -->
+    <div id="spinner" class="spinner" style="display: none;"></div>
+
+    <!-- Table to display results -->
+    <h2>Schedule</h2>
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>TimeSlot</th>
+                <th>Room</th>
+                <th>Matchup</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <!-- Link to the JavaScript -->
+    <script src="app.js"></script>
+</body>
+</html>
