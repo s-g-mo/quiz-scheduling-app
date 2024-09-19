@@ -17,13 +17,13 @@ class ScheduleSolver:
         constraints_relaxed = []
         problem = self.attempt_schedule(matchups=matchups)
 
-        if problem and pulp.LpStatus[problem.status] == "Optimal":
+        if pulp.LpStatus[problem.status] == "Optimal":
             print("Solution found!")
         else:
             for constraint in ["room_diversity", "consecutive_matches"]:
                 constraints_relaxed.append(constraint)
                 problem = self.attempt_schedule(matchups, relax_constraints=constraints_relaxed)
-                if problem and pulp.LpStatus[problem.status] == "Optimal":
+                if pulp.LpStatus[problem.status] == "Optimal":
                     break
             else:
                 print("No feasible solution found even after relaxing constraints.")
@@ -49,7 +49,7 @@ class ScheduleSolver:
         self.enforce_constraints(problem, variables, matchups, relax_constraints)
 
         problem.solve()
-        return problem, None
+        return problem
 
     def check_schedule(self, df_schedule: pd.DataFrame) -> bool:
         print(df_schedule)
