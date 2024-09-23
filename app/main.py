@@ -1,5 +1,7 @@
+import os
 import traceback
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from app.matchups import MatchupSolver
 from app.scheduler import ScheduleSolver
@@ -23,6 +25,11 @@ app = FastAPI(
     },
 )
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
+
+@app.get("/")
+async def read_index():
+    return FileResponse(os.path.join("app/static", "index.html"))
 
 
 @app.post("/generate-matchups/", tags=["Matchups"])
