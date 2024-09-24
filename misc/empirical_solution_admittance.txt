@@ -1,6 +1,6 @@
-Solution Assessment of Combinations of N_matches_per_team & N_teams
+Solution Assessment of Combinations of n_matches_per_team & n_teams
 
-N_matches_per_team | N_teams
+n_matches_per_team | n_teams
 ----------------------------------------------------------------------------
 1    | x, x, 3, x, x, 6, x, x, 9, xx, xx, 12, xx, xx, 15,
 2    | x, x, x, x, x, 6, x, x, 9, xx, xx, 12, xx, xx, 15,

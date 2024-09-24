@@ -1,3 +1,7 @@
+"""
+Earlier version of the code from when I first started proto-typing this project.
+"""
+
 import itertools
 from typing import Dict, List, Tuple, Union
 
