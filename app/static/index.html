@@ -8,15 +8,12 @@
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 </head>
 <body>
+<div id="mainContainer">
     <h1>Quiz Schedule Generator</h1>
-
-    <div>
-        <p>
-            <a href="https://github.com/s-g-mo/quiz-scheduling-app", target="_blank">
-                View this project and documentation on GitHub
-            </a>
-        </p>
-    </div>
+    <p>
+        <a href="https://github.com/s-g-mo/quiz-scheduling-app", target="_blank">
+        View this project and documentation on GitHub</a>
+    </p>
 
     <!-- Error message div for showing errors -->
     <div id="error-message" style="color: red;"></div> <!-- Styled for visibility -->
@@ -39,6 +36,14 @@
     <!-- Spinner to indicate the loading process -->
     <div id="spinner" class="spinner" style="display: none;"></div>
 
+    <div id="tipsSection">
+        <h2>Tips for Generating Schedules</h2>
+        <ol>
+            <li><strong>Struggling to generate a valid schedule?</strong> Try setting the number of matches per team to 3 and the number of teams to 7 or more. This setup tends to give the best results. See the documentation for more details.</li>
+            <li><strong>Still no luck?</strong> Try increasing the number of time slots first, then adjust the number of rooms if needed.</li>
+        </ol>
+    </div>
+
     <!-- Table to display results -->
     <h2>Schedule</h2>
     <table id="resultTable">
@@ -52,6 +57,7 @@
         <tbody>
         </tbody>
     </table>
+</div>
 
     <!-- Link to the JavaScript -->
     <script src="/static/app.js"></script>
